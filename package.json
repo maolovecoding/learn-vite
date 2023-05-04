@@ -7,7 +7,8 @@
     "myvite": "./vite/bin/vite.js"
   },
   "scripts": {
-    "dev": "vite"
+    "dev": "vite",
+    "debugger": "myvite"
   },
   "keywords": [],
   "author": "",

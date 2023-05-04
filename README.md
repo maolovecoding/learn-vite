@@ -93,3 +93,17 @@ require('esbuild').build({
 ```shell
 pnpm install connect es-module-lexer resolve check-is-array esbuild fast-glob fs-extra serve-static magic-string chokidar ws  hash-sum --save
 ```
+
+## vite工作原理
+
+在vite启动一个服务的时候，进行了如下的工作：
+
+1. 扫描整个项目，找到项目依赖的第三方模块
+2. 编译这些第三方模块（esm），放到.vite目录中
+3. 重写返回的导出路径，指向编译后的文件
+4. 请浏览器访问该文件的时候，可以返回该编译后的文件
+
+```js
+import {createApp} from 'vue'
+import {createApp} from '/node_modules/.vite/deps/vue.js'
+```
