@@ -6,7 +6,13 @@ const { normalizePath } = require("../utils")
  * plugins 插件数组 格式和rollup插件是一样的 {name, resolveId}
  * @returns 
  */
-async function createPluginContainer({ plugins, root }){
+async function createPluginContainer({ plugins, root }) {
+  // 插件上下文类
+  class PluginContext {
+    async resolve(id, importer){
+      return await container.resolveId(id, importer)
+    }
+  }
   const container = {
     /**
      * 解析路径
@@ -15,9 +21,10 @@ async function createPluginContainer({ plugins, root }){
      */
     async resolveId(path, importer){
       let resolveId = path
+      const ctx = new PluginContext()
       for(const plugin of plugins) {
         if (!plugin.resolveId)continue
-        const result = await plugin.resolveId.call(null, path, importer)
+        const result = await plugin.resolveId.call(ctx, path, importer)
         if (result) {
           resolveId = result.id || result
           break
@@ -27,8 +34,33 @@ async function createPluginContainer({ plugins, root }){
         id: normalizePath(resolveId)
       }
     },
-    load(){},
-    transform(){}
+    async load(id){
+      const ctx = new PluginContext()
+      for(const plugin of plugins) {
+        if (!plugin.load) continue
+        const result = await plugin.load.call(ctx, id)
+        if (result) {
+          return result
+        }
+      }
+      return null
+    },
+    async transform(code, id){
+      const ctx = new PluginContext()
+      for(const plugin of plugins) {
+        if (!plugin.transform) continue
+        // call(注入this) this => 插件上下文对象
+        const result = await plugin.transform.call(ctx, code, id)
+        if (!result) {
+          continue
+        } else {
+          code = result.code || result
+        }
+      }
+      return {
+        code
+      }
+    }
   }
   return container
 }

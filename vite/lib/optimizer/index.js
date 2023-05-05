@@ -44,9 +44,9 @@ async function createOptimizeDepsRun(config){
       }
       return val
     }, 2))
-    return {
-      metadata
-    }
+  }
+  return {
+    metadata
   }
 }
 
