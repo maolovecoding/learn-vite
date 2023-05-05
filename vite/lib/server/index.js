@@ -9,7 +9,7 @@ const createServer = async () => {
   const server = {
     async listen(port, callback){
       // 项目启动前 进行依赖预构建
-      await runOptimize(config)
+      await runOptimize(config, server)
       require('http')
       .createServer(middlewares)
       .listen(port, callback)
@@ -20,8 +20,9 @@ const createServer = async () => {
 /**
  * 依赖预构建
  */
-async function runOptimize(config){
-  await createOptimizeDepsRun(config)
+async function runOptimize(config, server){
+  const optimizeDeps = await createOptimizeDepsRun(config)
+  server._optimizeDepsMetadata = optimizeDeps.metadata
 }
 
 module.exports = {

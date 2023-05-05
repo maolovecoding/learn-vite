@@ -1,9 +1,11 @@
 const { normalizePath } = require('./utils')
-
+const path = require('path')
 async function resolveConfig(){
   const root = normalizePath(process.cwd())
+  const cacheDir = normalizePath(path.resolve('node_modules/.myvite'))
   const config = {
-    root
+    root,
+    cacheDir
   }
   return config
 }

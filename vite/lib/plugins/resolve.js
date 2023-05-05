@@ -7,7 +7,6 @@ const fs = require('fs-extra')
  * @returns 
  */
 function resolvePlugin({ root }){
-  console.log(root,' resolvePlugin')
   return {
     name: 'resolve',
     /**
