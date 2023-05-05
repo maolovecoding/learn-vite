@@ -6,7 +6,7 @@
 function normalizePath(path){
   return path.replace(/\\/g, '/')
 }
-const knowJsSrcRE = /\.js($|\?)/
+const knowJsSrcRE = /\.(js|vue)($|\?)/
 /**
  * 
  * @param {string} url 

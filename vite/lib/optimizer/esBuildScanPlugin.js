@@ -22,6 +22,16 @@ async function esBuildScanPlugin(config, depImports){
   return {
     name: 'scan', // 依赖扫描插件
     setup(build){
+      // 遇到vue文件 返回绝对路径 标识为外部依赖
+      build.onResolve({ filter: /\.vue$/ }, async ({ path: id,importer }) => {
+        const resolved = await resolve(id, importer)
+        if (resolved) {
+          return {
+            path: resolved.id || resolved,
+            external: true
+          }
+        }
+      })
       build.onResolve({ filter: htmlTypesRE }, async ({ path,importer }) => {
         // 入口文件是html 找到文件的真实路径 path不一定是绝对路径
         const resolved = await resolve(path, importer)
@@ -32,23 +42,23 @@ async function esBuildScanPlugin(config, depImports){
           }
         }
       })
-    build.onResolve({ filter: /.*/ }, async ({ path, importer }) => {
-      const resolved = await resolve(path, importer)
-      if (resolved) {
-        const id = resolved.id || resolved
-        if (id.includes('node_modules')) {
-          depImports[path] = normalizePath(id) // vue: node_modules/vue/dist/xxxxx
-          return {
-            external: true, // 外部模块
-            path: id,
-          }
-        } else {
-          return {
-            path: id
+      build.onResolve({ filter: /.*/ }, async ({ path, importer }) => {
+        const resolved = await resolve(path, importer)
+        if (resolved) {
+          const id = resolved.id || resolved
+          if (id.includes('node_modules')) {
+            depImports[path] = normalizePath(id) // vue: node_modules/vue/dist/xxxxx
+            return {
+              external: true, // 外部模块
+              path: id,
+            }
+          } else {
+            return {
+              path: id
+            }
           }
         }
-      }
-    })
+      })
       build.onLoad({filter: htmlTypesRE, namespace: 'html'}, async ({ path }) => {
         // 读取文件内容 把 html => js
         const html = fs.readFileSync(path, 'utf-8')
