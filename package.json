@@ -23,6 +23,7 @@
     "check-is-array": "^2.0.6",
     "chokidar": "^3.5.3",
     "connect": "^3.7.0",
+    "dedent": "^0.7.0",
     "es-module-lexer": "^1.2.1",
     "fast-glob": "^3.2.12",
     "fs-extra": "^11.1.1",

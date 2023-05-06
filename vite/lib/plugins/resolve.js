@@ -16,16 +16,17 @@ function resolvePlugin({ root }){
      */
     resolveId(path, importer){
       // TODO 路径别名
-      // 路径是绝对路径
-      if (pathLib.isAbsolute(path) && fs.pathExistsSync(path)) {
-        return {
-          id: path,
-        }
-      }
       // 判断path是否是 / 开头 是根目录下的绝对路径
       if (path.startsWith('/')) {
         return {
           id: pathLib.resolve(root, path.slice(1))
+        }
+      }
+      // TODO windows和mac绝对路径是否有问题？
+      // 路径是绝对路径
+      if (pathLib.isAbsolute(path)) {
+        return {
+          id: path,
         }
       }
       // 是相对路径

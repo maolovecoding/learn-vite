@@ -8,3 +8,8 @@
     name: "App"
   }
 </script>
+<style>
+  h2 {
+    color: red;
+  }
+</style>

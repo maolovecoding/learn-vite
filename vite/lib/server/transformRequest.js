@@ -1,4 +1,5 @@
 const fs = require('fs-extra')
+const { parse } = require('url')
 /**
  * 
  * @param {string} url /src/index.js?hash=xxx
@@ -15,7 +16,8 @@ async function tranformRequest(url, server){
   if (loadResult) {
     code = loadResult.code
   } else {
-    code = fs.readFileSync(id, 'utf-8')
+    const fsPath = parse(id).pathname // 去掉query
+    code = fs.readFileSync(fsPath, 'utf-8')
   }
   // transform => 转换文件内第三方模块的路径为预解析得到的路径
   const result = await pluginContainer.transform(code, id)
