@@ -17,8 +17,10 @@ async function tranformRequest(url, server){
     code = loadResult.code
   } else {
     const fsPath = parse(id).pathname // 去掉query
-    code = fs.readFileSync(fsPath, 'utf-8')
+    code = await fs.readFile(fsPath, 'utf-8')
   }
+  // 把每个url变成一个入口
+  await server.moduleGraph.ensureEntryFormUrl(url)
   // transform => 转换文件内第三方模块的路径为预解析得到的路径
   const result = await pluginContainer.transform(code, id)
   return result
